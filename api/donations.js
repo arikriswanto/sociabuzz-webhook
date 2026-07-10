@@ -29,10 +29,11 @@ module.exports = async (req, res) => {
 
   if (req.method === "POST") {
     const body = req.body || {};
+    console.log("[donations] Body:", JSON.stringify(body));
     const donation = {
-      supporter_name: body.supporter_name || body.name || "Anonymous",
-      amount:         body.amount || body.donation_amount || 0,
-      message:        body.message || body.support_message || "",
+      supporter_name: body.supporter_name || body.name || body.donator_name || body.username || body.from || "Anonymous",
+      amount:         body.amount || body.donation_amount || body.nominal || 0,
+      message:        body.message || body.support_message || body.pesan || "",
     };
     await pushDonation(donation);
     console.log(`[donations] Queued: ${donation.supporter_name} — Rp${donation.amount}`);

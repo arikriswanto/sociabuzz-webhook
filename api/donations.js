@@ -28,13 +28,23 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   if (req.method === "POST") {
+    // Sociabuzz kirim token di header sb-webhook-token
+    const token = req.headers["sb-webhook-token"] || "";
+    if (WEBHOOK_TOKEN && token !== WEBHOOK_TOKEN) {
+      return res.status(403).json({ error: "Invalid token" });
+    }
+
     const body = req.body || {};
     console.log("[donations] Body:", JSON.stringify(body));
+
+    // Sociabuzz bisa nge-nest payload di body.data
+    const d = body.data || body;
     const donation = {
-      supporter_name: body.supporter_name || body.name || body.donator_name || body.username || body.from || "Anonymous",
-      amount:         body.amount || body.donation_amount || body.nominal || 0,
-      message:        body.message || body.support_message || body.pesan || "",
+      supporter_name: d.supporter_name || d.supporter || d.name || d.donator_name || "Anonymous",
+      amount:         d.amount_settled || d.amount || d.nominal || d.donation_amount || 0,
+      message:        d.message || d.support_message || d.pesan || "",
     };
+
     await pushDonation(donation);
     console.log(`[donations] Queued: ${donation.supporter_name} — Rp${donation.amount}`);
     return res.status(200).json({ success: true });

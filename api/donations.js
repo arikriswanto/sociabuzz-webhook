@@ -18,9 +18,9 @@ module.exports = async (req, res) => {
       (req.body && req.body.token) ||
       "";
 
-    if (WEBHOOK_TOKEN && token !== WEBHOOK_TOKEN) {
-      return res.status(403).json({ error: "Invalid token" });
-    }
+    //if (WEBHOOK_TOKEN && token !== WEBHOOK_TOKEN) {
+      //return res.status(403).json({ error: "Invalid token" });
+    //}
 
     const body = req.body || {};
     const donation = {
